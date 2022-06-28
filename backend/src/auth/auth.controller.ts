@@ -8,22 +8,11 @@ export class AuthController {
 
   @Get('token')
   async getToken(@Ip() ip): Promise<string> {
-    const clients = await this.databaseService.getData<TimerClient>('clients');
-    return clients.filter((item) => item.id == ip).map((item) => item.token)[0];
+    return 'asdasd';
   }
 
   @Post('token')
   async registerToken(@Ip() ip) {
-    const clients = await this.databaseService.getData<TimerClient>('clients');
-    let clientData = clients.filter((item) => item.id == ip)[0];
-    console.log(clientData);
-    if (!clientData.token) {
-      clientData = {
-        id: ip,
-        token: v4(),
-      };
-      await this.databaseService.setData('clients', `${ip}.json`, clientData);
-    }
-    return clientData;
+    return 'clientData';
   }
 }

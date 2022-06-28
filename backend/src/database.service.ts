@@ -1,35 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { promises as fs } from 'fs';
-import * as path from 'path';
+import { Client, ClientConfig } from 'pg';
+import { ICallbackMessage } from './interfaces';
+import { Request } from './utils/classes';
+import { query } from './utils/pg/query';
 
 export class TimerClient {
   id: string;
   token?: string;
 }
 
-const FILE_ENCODING_CFG = 'utf-8';
+const DB_CONNECT_CONFIG: ClientConfig = {
+  host: process.env.DB_TIMER_HOST || 'localhost',
+  port: +process.env.DB_TIMER_PORT || 5432,
+  user: process.env.DB_TIMER_USER || 'timer-user',
+  password: process.env.DB_TIMER_PASSWORD || 'timer-user-password',
+  database: process.env.DB_TIMER_DATABASE || 'server-timer',
+};
 
 @Injectable()
 export class DatabaseService {
-  async getData<T>(dataSource: string) {
-    const dataPath = path.resolve(process.env.DB_PATH, dataSource);
-    const dataFileNames: string[] = await fs.readdir(dataPath);
-    const data = [];
-    for (let fileName of dataFileNames) {
-      const filePath = path.resolve(dataPath, fileName);
-      data.push(
-        JSON.parse(
-          await fs.readFile(filePath, { encoding: FILE_ENCODING_CFG }),
-        ),
-      );
-    }
-    return data as T[];
-  }
+  client: Client = new Client(DB_CONNECT_CONFIG);
 
-  async setData(dataSource: string, fileName: string, newData: any) {
-    const filePath = path.resolve(process.env.DB_PATH, dataSource, fileName);
-    await fs.writeFile(filePath, JSON.stringify(newData), {
-      encoding: FILE_ENCODING_CFG,
-    });
+  async query(req: Request[]): Promise<ICallbackMessage> {
+    return query(req, this.client);
   }
 }

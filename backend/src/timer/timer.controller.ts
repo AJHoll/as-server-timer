@@ -6,6 +6,6 @@ export class TimerController {
   constructor(private databaseService: DatabaseService) {}
   @Get('all')
   getAllTimers(): any {
-    return this.databaseService.getData('timers');
+    return [];
   }
 }
