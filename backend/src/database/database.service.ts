@@ -74,20 +74,14 @@ export class DatabaseService {
         }
       }
     }
-
-    // console.log({ query: transQuery, bindingParams: transParams });
-    // пробегаемся по запросу и меняем наши ключи на индексы
-
     return { query: transQuery, bindingParams: transParams };
   }
 
   async query(req: Request[]): Promise<ICallbackMessage> {
     if (this.client) {
-      console.log('client', this.client);
       try {
         let data: any[] = [];
         if (req[0].useTransaction) {
-          console.log('use-transaction');
           try {
             await this.client.query('BEGIN');
             for (let request of req) {
@@ -116,7 +110,6 @@ export class DatabaseService {
             return { status: ICallbackMessageStatus.QueryError, error: err };
           }
         } else {
-          console.log('not_use_transaction');
           for (let request of req) {
             request.bindingParams = this.chainingQuery(
               request.bindingParams,
@@ -126,21 +119,13 @@ export class DatabaseService {
               request.operation.query,
               request.bindingParams,
             );
-            try {
-              const queryRes = this.client.query(
-                transQuery.query,
-                transQuery.bindingParams,
-              );
-
-              console.log(await queryRes);
-              data = [...data, (await queryRes).rows];
-            } catch (err) {
-              console.error(err);
-              throw err;
-            }
+            const singleData = await this.client.query(
+              transQuery.query,
+              transQuery.bindingParams,
+            );
+            data = [...data, ...singleData.rows];
           }
         }
-        console.log(data);
         return { status: ICallbackMessageStatus.Done, data: data };
       } catch (err) {
         return { status: ICallbackMessageStatus.QueryError, error: err };

@@ -1,4 +1,8 @@
-import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import {
+  MessageBody,
+  SubscribeMessage,
+  WebSocketGateway,
+} from '@nestjs/websockets';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/AuthDto';
 
@@ -7,8 +11,11 @@ export class AuthGateway {
   constructor(private authService: AuthService) {}
 
   @SubscribeMessage('auth-sign-in')
-  handleMessage(client, payload: AuthDto): any {
-    console.log(payload);
-    return this.authService.signIn(payload.username, payload.password);
+  handleMessage(
+    @MessageBody('username') username: string,
+    @MessageBody('password') password: string,
+  ): any {
+    console.log(username, password);
+    return this.authService.signIn(username, password);
   }
 }

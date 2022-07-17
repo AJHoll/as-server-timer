@@ -28,7 +28,10 @@ export default function AuthPage(props: any) {
               values.password
             );
             if (retVal.status === "error") {
-              // message.error("Что то пошло не так");
+              message.error(retVal.message);
+            } else {
+              message.success(retVal.message);
+              navigate(-1);
             }
           }}
         >
