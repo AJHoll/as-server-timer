@@ -1,6 +1,6 @@
-import { ICallbackMessage, IOperation, IRequest } from "../../interfaces";
-import { v4 } from "uuid";
-import { Filter } from ".";
+import { ICallbackMessage, IOperation, IRequest } from '.';
+import { v4 } from 'uuid';
+import Filter from './Filter';
 
 class Request implements IRequest {
   name: string;
@@ -14,7 +14,7 @@ class Request implements IRequest {
   constructor(
     operation?: IOperation,
     useTransaction?: boolean,
-    bindingParams?: Object
+    bindingParams?: Object,
   ) {
     this.name = v4();
     if (operation)
@@ -22,7 +22,7 @@ class Request implements IRequest {
         query: operation?.query,
         bindingParams: operation?.bindingParams,
       };
-    else this.operation = { query: "", bindingParams: {} };
+    else this.operation = { query: '', bindingParams: {} };
 
     this.bindingParams = { ...this.operation.bindingParams };
     if (bindingParams) {
@@ -40,7 +40,7 @@ class Request implements IRequest {
   }
 
   Post(
-    post: (request: Request, payload: ICallbackMessage) => ICallbackMessage
+    post: (request: Request, payload: ICallbackMessage) => ICallbackMessage,
   ) {
     this._post = post;
     return this;
@@ -60,7 +60,7 @@ class Request implements IRequest {
       if (flt.bindingParams[flt.name] !== (undefined && null)) {
         this.operation.query = this.operation.query.replaceAll(
           `/*filter:${flt.name}*/`,
-          flt.query
+          flt.query,
         );
 
         this.bindingParams = { ...this.bindingParams, ...flt.bindingParams };

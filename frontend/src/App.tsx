@@ -2,7 +2,7 @@ import "./App.css";
 import { AppRouter } from "./Router";
 
 function App() {
-  return <AppRouter />;
+  return <AppRouter webSocket />;
 }
 
 export default App;

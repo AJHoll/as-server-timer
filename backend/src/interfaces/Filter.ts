@@ -1,4 +1,4 @@
-import { IFilter } from "../../interfaces";
+import { IFilter } from '.';
 
 export default class Filter implements IFilter {
   name: string;
@@ -6,8 +6,8 @@ export default class Filter implements IFilter {
   bindingParams: any;
 
   constructor(filter: IFilter | undefined, bindingParams?: any) {
-    this.name = filter?.name || "";
-    this.query = filter?.query || "";
+    this.name = filter?.name || '';
+    this.query = filter?.query || '';
     this.bindingParams = bindingParams || {};
   }
 }
