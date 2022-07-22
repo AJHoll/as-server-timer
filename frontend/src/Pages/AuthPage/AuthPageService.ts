@@ -1,14 +1,12 @@
-import SocketService from "../../Services/SocketService";
+import socketService from "../../Services/SocketService";
 
 export default class AuthPageService {
-  socketService = new SocketService();
-
   async signIn(
     username: string,
     password: string
   ): Promise<{ status: string; message: string }> {
     const data: { id: string; status: string; secret: string } =
-      await this.socketService.send("auth-sign-in", {
+      await socketService.send("auth-sign-in", {
         username,
         password,
       });

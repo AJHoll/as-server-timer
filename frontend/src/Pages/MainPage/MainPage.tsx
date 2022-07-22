@@ -19,7 +19,7 @@ export class MainPageClass extends React.Component<any> {
       <div className="app-layout-center">
         <div className="app-main-page-container">
           <div className="app-main_page_container__footer">
-            <Row justify="center" align="middle" gutter={10}>
+            <Row justify="center" align="middle" gutter={15}>
               <Col>
                 <Button
                   size="large"

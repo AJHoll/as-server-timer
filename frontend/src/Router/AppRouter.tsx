@@ -6,10 +6,16 @@ export default function AppRouter(props: any) {
     <>
       <Router>
         <Routes>
-          <Route path="/" element={<MainPage />} />
-          <Route path="/auth" element={<AuthPage />} />
-          <Route path="/client-timer" element={<ClientTimerPage />} />
-          <Route path="/config-timer" element={<ConfigTimerPage />} />
+          <Route path="/" element={<MainPage {...props} />} />
+          <Route path="/auth" element={<AuthPage {...props} />} />
+          <Route
+            path="/client-timer"
+            element={<ClientTimerPage {...props} />}
+          />
+          <Route
+            path="/config-timer"
+            element={<ConfigTimerPage {...props} />}
+          />
         </Routes>
       </Router>
     </>

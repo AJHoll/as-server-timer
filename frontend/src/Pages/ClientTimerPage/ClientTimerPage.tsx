@@ -1,9 +1,7 @@
 import React from "react";
 import { ReactNode } from "react";
 import "./ClientTimerPage.css";
-import ClientTimerPageService, {
-  ClienttimerPageService,
-} from "./ClientTimerPageService";
+import ClientTimerPageService from "./ClientTimerPageService";
 
 export interface ClientTimerPageState {
   intervalId: number | undefined;
@@ -11,11 +9,14 @@ export interface ClientTimerPageState {
 }
 
 export default class ClientTimerPage extends React.Component<any> {
-  clientTimerPageService: ClienttimerPageService = ClientTimerPageService;
+  clientTimerPageService: ClientTimerPageService = new ClientTimerPageService(
+    this
+  );
+  webSocket = this.props.webSocket;
 
   state: ClientTimerPageState = {
     intervalId: undefined,
-    timerAmount: 8,
+    timerAmount: 0,
   };
 
   timerHandler = () => {
@@ -32,8 +33,17 @@ export default class ClientTimerPage extends React.Component<any> {
     return date.toISOString().substring(11, 19);
   }
 
-  componentDidMount() {
-    this.setState({ intervalId: setInterval(this.timerHandler, 1000) });
+  async syncTimerWithServer() {
+    const timerAmount = await this.clientTimerPageService.getActiveTimer();
+    this.setState({ timerAmount });
+  }
+
+  async componentDidMount() {
+    await this.syncTimerWithServer();
+    this.clientTimerPageService.subscribeOnServer();
+    this.setState({
+      intervalId: setInterval(this.timerHandler, 1000),
+    });
   }
 
   componentWillUnmount() {

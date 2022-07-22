@@ -1,6 +1,6 @@
 import { io, Socket } from "socket.io-client";
 
-export default class SocketService {
+export class SocketService {
   socket: Socket;
 
   constructor() {
@@ -17,4 +17,12 @@ export default class SocketService {
       });
     });
   }
+
+  on(event: string, listener: (status: string, payload: any) => void) {
+    this.socket.on(event, listener);
+  }
 }
+
+const socketService = new SocketService();
+
+export default socketService;
