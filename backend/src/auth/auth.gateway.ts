@@ -15,7 +15,6 @@ export class AuthGateway {
     @MessageBody('username') username: string,
     @MessageBody('password') password: string,
   ): any {
-    console.log(username, password);
     return this.authService.signIn(username, password);
   }
 }

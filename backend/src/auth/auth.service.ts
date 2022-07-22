@@ -14,7 +14,7 @@ export class AuthService {
       new Request({
         query: `select usr.* from "user" usr where usr.username = $(username)`,
         bindingParams: { username },
-      }).Pre((req) => console.log(req)),
+      }),
     );
     const response = await this.databaseService.query(requests);
     if (response.status === ICallbackMessageStatus.Done) {
@@ -27,7 +27,7 @@ export class AuthService {
         return { status: 'error', data: 'Логин или пароль не верен!' };
       }
     } else {
-      console.log(response.error);
+      console.error(response.error);
       return { status: 'error', data: response.error };
     }
   }
