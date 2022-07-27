@@ -8,10 +8,16 @@
   display: flex;
   justify-content: center;
   align-self: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 .app-client-timer-page-container__timer h1 {
   font-size: 25vh;
+}
+.app-client-timer-page-container__timer h2 {
+  font-size: 7.5vh;
+  color: darkgrey;
 }
 
 .app-client-timer-page_container__footer {

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import { ICallbackMessageStatus, Request } from 'src/interfaces';
-import { UserDto } from './dto/UserDto';
+import { UserDto } from './dto/user.dto';
 import { createHash } from 'crypto';
 
 @Injectable()

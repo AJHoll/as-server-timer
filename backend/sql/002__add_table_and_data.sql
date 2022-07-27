@@ -1,6 +1,6 @@
--- Создание таблиц данных
+-- РЎРѕР·РґР°РЅРёРµ С‚Р°Р±Р»РёС† РґР°РЅРЅС‹С…
 ------------------------
--- Типы пользователей --
+-- РўРёРїС‹ РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№ --
 ------------------------
 -- Sequence
 CREATE SEQUENCE seq_user_type
@@ -13,27 +13,27 @@ CREATE SEQUENCE seq_user_type
 ALTER SEQUENCE seq_user_type OWNER TO "timer-user";
 GRANT ALL ON SEQUENCE seq_user_type TO "timer-user";
 CREATE TABLE user_type (
-  id numeric NOT NULL DEFAULT nextval('seq_user_type'::regclass), -- Код
-  "name" varchar NOT NULL DEFAULT ''::character varying, -- Системное имя
-  caption varchar NULL, -- Наименование
-  "admin" bool NOT NULL DEFAULT false, -- Административные привилегии?
+  id numeric NOT NULL DEFAULT nextval('seq_user_type'::regclass), -- РљРѕРґ
+  "name" varchar NOT NULL DEFAULT ''::character varying, -- РЎРёСЃС‚РµРјРЅРѕРµ РёРјСЏ
+  caption varchar NULL, -- РќР°РёРјРµРЅРѕРІР°РЅРёРµ
+  "admin" bool NOT NULL DEFAULT false, -- РђРґРјРёРЅРёСЃС‚СЂР°С‚РёРІРЅС‹Рµ РїСЂРёРІРёР»РµРіРёРё?
   CONSTRAINT pk_user_type PRIMARY KEY (id)
 );
-COMMENT ON TABLE user_type IS 'Типы пользователей';
+COMMENT ON TABLE user_type IS 'РўРёРїС‹ РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№';
 -- Column comments
-COMMENT ON COLUMN user_type.id IS 'Код';
-COMMENT ON COLUMN user_type."name" IS 'Системное имя';
-COMMENT ON COLUMN user_type.caption IS 'Наименование';
+COMMENT ON COLUMN user_type.id IS 'РљРѕРґ';
+COMMENT ON COLUMN user_type."name" IS 'РЎРёСЃС‚РµРјРЅРѕРµ РёРјСЏ';
+COMMENT ON COLUMN user_type.caption IS 'РќР°РёРјРµРЅРѕРІР°РЅРёРµ';
 -- Permissions
 ALTER TABLE user_type OWNER TO "timer-user";
 GRANT ALL ON TABLE user_type TO "timer-user";
 -- Data
-insert into user_type(name, caption, "admin") values('root', 'Системный администратор', true);
-insert into user_type(name, caption) values('competentionAdmin', 'Организатор компетенции');
-insert into user_type(name, caption) values('client', 'Участник компетенции');
+insert into user_type(name, caption, "admin") values('root', 'РЎРёСЃС‚РµРјРЅС‹Р№ Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ', true);
+insert into user_type(name, caption) values('competentionAdmin', 'РћСЂРіР°РЅРёР·Р°С‚РѕСЂ РєРѕРјРїРµС‚РµРЅС†РёРё');
+insert into user_type(name, caption) values('client', 'РЈС‡Р°СЃС‚РЅРёРє РєРѕРјРїРµС‚РµРЅС†РёРё');
 
 ------------------
--- Пользователи --
+-- РџРѕР»СЊР·РѕРІР°С‚РµР»Рё --
 ------------------
 -- Sequence
 CREATE SEQUENCE seq_user
@@ -47,30 +47,30 @@ ALTER SEQUENCE seq_user OWNER TO "timer-user";
 GRANT ALL ON SEQUENCE seq_user TO "timer-user";
 
 CREATE TABLE "user" (
-  id numeric NOT NULL DEFAULT nextval('seq_user'::regclass), -- Код
-  id_user_type numeric NOT NULL, -- Код типа пользователя
-  username varchar NOT NULL, -- Логин
-  caption varchar NOT NULL, -- Наименование пользователя
-  secret varchar NOT NULL, -- Пароль
+  id numeric NOT NULL DEFAULT nextval('seq_user'::regclass), -- РљРѕРґ
+  id_user_type numeric NOT NULL, -- РљРѕРґ С‚РёРїР° РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+  username varchar NOT NULL, -- Р›РѕРіРёРЅ
+  caption varchar NOT NULL, -- РќР°РёРјРµРЅРѕРІР°РЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+  secret varchar NOT NULL, -- РџР°СЂРѕР»СЊ
   CONSTRAINT pk_user PRIMARY KEY (id),
   CONSTRAINT fk_user_id_user_type FOREIGN KEY (id_user_type) REFERENCES user_type(id)
 );
 CREATE INDEX idx_user_id_user_type ON "user" USING btree (id_user_type);
 -- Column comments
-COMMENT ON COLUMN "user".id IS 'Код';
-COMMENT ON COLUMN "user".id_user_type IS 'Код типа пользователя';
-COMMENT ON COLUMN "user".username IS 'Логин';
-COMMENT ON COLUMN "user".caption IS 'Наименование пользователя';
-COMMENT ON COLUMN "user".secret IS 'Пароль';
+COMMENT ON COLUMN "user".id IS 'РљРѕРґ';
+COMMENT ON COLUMN "user".id_user_type IS 'РљРѕРґ С‚РёРїР° РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ';
+COMMENT ON COLUMN "user".username IS 'Р›РѕРіРёРЅ';
+COMMENT ON COLUMN "user".caption IS 'РќР°РёРјРµРЅРѕРІР°РЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ';
+COMMENT ON COLUMN "user".secret IS 'РџР°СЂРѕР»СЊ';
 -- Permissions
 ALTER TABLE "user" OWNER TO "timer-user";
 GRANT ALL ON TABLE "user" TO "timer-user";
 -- Data
 insert into "user"(id_user_type, username, caption, secret)
-values((select ut.id from user_type ut where ut."name"='root'), 'root', 'Главный по таймерам', '5d3c54e0f3ef9542edbb9835c9afb77a0538d1b413b976071175ca4434d8ad44');
+values((select ut.id from user_type ut where ut."name"='root'), 'root', 'Р“Р»Р°РІРЅС‹Р№ РїРѕ С‚Р°Р№РјРµСЂР°Рј', '5d3c54e0f3ef9542edbb9835c9afb77a0538d1b413b976071175ca4434d8ad44');
 
 ---------------------
--- Группы таймеров --
+-- Р“СЂСѓРїРїС‹ С‚Р°Р№РјРµСЂРѕРІ --
 ---------------------
 CREATE SEQUENCE seq_timer_group
 	INCREMENT BY 1
@@ -83,27 +83,27 @@ ALTER SEQUENCE seq_timer_group OWNER TO "timer-user";
 GRANT ALL ON SEQUENCE seq_timer_group TO "timer-user";
 
 CREATE TABLE timer_group (
-	id numeric NOT NULL DEFAULT nextval('seq_timer_group'::regclass), -- Код
-	"name" varchar NOT NULL, -- Системное имя
-	caption varchar NULL, -- Наименование
+	id numeric NOT NULL DEFAULT nextval('seq_timer_group'::regclass), -- РљРѕРґ
+	"name" varchar NOT NULL, -- РЎРёСЃС‚РµРјРЅРѕРµ РёРјСЏ
+	caption varchar NULL, -- РќР°РёРјРµРЅРѕРІР°РЅРёРµ
 	CONSTRAINT pk_timer_group PRIMARY KEY (id)
 );
 CREATE INDEX idx_timer_group_caption ON timer_group USING btree (caption);
 CREATE UNIQUE INDEX udx_timer_group_name ON timer_group USING btree (name);
 
-COMMENT ON TABLE timer_group IS 'Группы таймеров';
-COMMENT ON COLUMN timer_group.id IS 'Код';
-COMMENT ON COLUMN timer_group."name" IS 'Системное имя';
-COMMENT ON COLUMN timer_group.caption IS 'Наименование';
+COMMENT ON TABLE timer_group IS 'Р“СЂСѓРїРїС‹ С‚Р°Р№РјРµСЂРѕРІ';
+COMMENT ON COLUMN timer_group.id IS 'РљРѕРґ';
+COMMENT ON COLUMN timer_group."name" IS 'РЎРёСЃС‚РµРјРЅРѕРµ РёРјСЏ';
+COMMENT ON COLUMN timer_group.caption IS 'РќР°РёРјРµРЅРѕРІР°РЅРёРµ';
 
 ALTER TABLE timer_group OWNER TO "timer-user";
 GRANT ALL ON TABLE timer_group TO "timer-user";
 
 insert into timer_group(name, caption)
-values('IT_Solution_for_business','Программные решения для бизнеса');
+values('IT_Solution_for_business','РџСЂРѕРіСЂР°РјРјРЅС‹Рµ СЂРµС€РµРЅРёСЏ РґР»СЏ Р±РёР·РЅРµСЃР°');
 
 -------------
--- Таймеры --
+-- РўР°Р№РјРµСЂС‹ --
 -------------
 CREATE SEQUENCE seq_timer
 	INCREMENT BY 1
@@ -116,30 +116,33 @@ ALTER SEQUENCE seq_timer OWNER TO "timer-user";
 GRANT ALL ON SEQUENCE seq_timer TO "timer-user";
 
 CREATE TABLE timer (
-	id numeric NOT NULL DEFAULT nextval('seq_timer'::regclass), -- Код
-	id_timer_group numeric NOT NULL, -- Код группы таймеров
-	caption varchar NOT NULL, -- Наименование
-	begin_timestamp timestamp NULL, -- Время начала таймера
-	sec_count numeric NULL, -- Количество секунд таймера
+	id numeric NOT NULL DEFAULT nextval('seq_timer'::regclass), -- РљРѕРґ
+	id_timer_group numeric NOT NULL, -- РљРѕРґ РіСЂСѓРїРїС‹ С‚Р°Р№РјРµСЂРѕРІ
+	caption varchar NOT NULL, -- РќР°РёРјРµРЅРѕРІР°РЅРёРµ
+	begin_timestamp timestamp NULL, -- Р’СЂРµРјСЏ РЅР°С‡Р°Р»Р° С‚Р°Р№РјРµСЂР°
+	sec_count numeric NULL, -- РљРѕР»РёС‡РµСЃС‚РІРѕ СЃРµРєСѓРЅРґ С‚Р°Р№РјРµСЂР°
 	CONSTRAINT pk_timer PRIMARY KEY (id),
 	CONSTRAINT fk_timer_id_timer_group FOREIGN KEY (id_timer_group) REFERENCES timer_group(id)
 );
 CREATE INDEX idx_timer_id_timer_group ON timer USING btree (id_timer_group);
 CREATE UNIQUE INDEX udx_timer_caption ON timer USING btree (caption);
 
-COMMENT ON TABLE timer IS 'Таймеры';
-COMMENT ON COLUMN timer.id IS 'Код';
-COMMENT ON COLUMN timer.id_timer_group IS 'Код группы таймеров';
-COMMENT ON COLUMN timer.caption IS 'Наименование';
+ALTER TABLE public.timer ALTER COLUMN begin_timestamp TYPE numeric USING begin_timestamp::varchar::numeric;
+
+
+COMMENT ON TABLE timer IS 'РўР°Р№РјРµСЂС‹';
+COMMENT ON COLUMN timer.id IS 'РљРѕРґ';
+COMMENT ON COLUMN timer.id_timer_group IS 'РљРѕРґ РіСЂСѓРїРїС‹ С‚Р°Р№РјРµСЂРѕРІ';
+COMMENT ON COLUMN timer.caption IS 'РќР°РёРјРµРЅРѕРІР°РЅРёРµ';
 
 ALTER TABLE timer OWNER TO "timer-user";
 GRANT ALL ON TABLE timer TO "timer-user";
 
 insert into timer(id_timer_group, caption)
-values((select group_in.id from timer_group group_in where group_in."name" = 'IT_Solution_for_business'), 'Команда 1')
+values((select group_in.id from timer_group group_in where group_in."name" = 'IT_Solution_for_business'), 'РљРѕРјР°РЅРґР° 1')
 
 --------------------------------
--- Типы операций над таймером --
+-- РўРёРїС‹ РѕРїРµСЂР°С†РёР№ РЅР°Рґ С‚Р°Р№РјРµСЂРѕРј --
 --------------------------------
 CREATE SEQUENCE seq_timer_operation_type
 	INCREMENT BY 1
@@ -152,28 +155,28 @@ ALTER SEQUENCE seq_timer_operation OWNER TO "timer-user";
 GRANT ALL ON SEQUENCE seq_timer_operation TO "timer-user";
 
 CREATE TABLE timer_operation_type (
-	id numeric NOT NULL DEFAULT nextval('seq_timer_operation_type'::regclass), -- Код
-	"name" varchar NOT NULL, -- Системное имя
-	caption varchar NOT NULL, -- Наименование
+	id numeric NOT NULL DEFAULT nextval('seq_timer_operation_type'::regclass), -- РљРѕРґ
+	"name" varchar NOT NULL, -- РЎРёСЃС‚РµРјРЅРѕРµ РёРјСЏ
+	caption varchar NOT NULL, -- РќР°РёРјРµРЅРѕРІР°РЅРёРµ
 	CONSTRAINT pk_timer_operation_type PRIMARY KEY (id)
 );
 CREATE UNIQUE INDEX udx_timer_operation_type_name ON timer_operation_type USING btree (name);
 
-COMMENT ON TABLE timer_operation_type IS 'Типы операций над таймером';
-COMMENT ON COLUMN timer_operation_type.id IS 'Код';
-COMMENT ON COLUMN timer_operation_type."name" IS 'Системное имя';
-COMMENT ON COLUMN timer_operation_type.caption IS 'Наименование';
+COMMENT ON TABLE timer_operation_type IS 'РўРёРїС‹ РѕРїРµСЂР°С†РёР№ РЅР°Рґ С‚Р°Р№РјРµСЂРѕРј';
+COMMENT ON COLUMN timer_operation_type.id IS 'РљРѕРґ';
+COMMENT ON COLUMN timer_operation_type."name" IS 'РЎРёСЃС‚РµРјРЅРѕРµ РёРјСЏ';
+COMMENT ON COLUMN timer_operation_type.caption IS 'РќР°РёРјРµРЅРѕРІР°РЅРёРµ';
 
 ALTER TABLE timer_operation_type OWNER TO "timer-user";
 GRANT ALL ON TABLE timer_operation_type TO "timer-user";
 
-insert into timer_operation_type(name, caption) values('start','Старт');
-insert into timer_operation_type(name, caption) values('pause','Пауза');
-insert into timer_operation_type(name, caption) values('continue','Продолжить');
-insert into timer_operation_type(name, caption) values('stop','Стоп');
+insert into timer_operation_type(name, caption) values('start','РЎС‚Р°СЂС‚');
+insert into timer_operation_type(name, caption) values('pause','РџР°СѓР·Р°');
+insert into timer_operation_type(name, caption) values('continue','РџСЂРѕРґРѕР»Р¶РёС‚СЊ');
+insert into timer_operation_type(name, caption) values('stop','РЎС‚РѕРї');
 
 ---------------------------
--- Операции над таймером --
+-- РћРїРµСЂР°С†РёРё РЅР°Рґ С‚Р°Р№РјРµСЂРѕРј --
 ---------------------------
 CREATE SEQUENCE seq_timer_operation
 	INCREMENT BY 1
@@ -186,10 +189,10 @@ ALTER SEQUENCE seq_timer_operation OWNER TO "timer-user";
 GRANT ALL ON SEQUENCE seq_timer_operation TO "timer-user";
 
 CREATE TABLE timer_operation (
-	id numeric NOT NULL DEFAULT nextval('seq_timer_operation'::regclass), -- Код
-	id_timer numeric NOT NULL, -- Код таймера
-	id_operation_type numeric NOT NULL, -- Код типа операции
-	operation_timestamp timestamp NOT NULL, -- Временная метка операции
+	id numeric NOT NULL DEFAULT nextval('seq_timer_operation'::regclass), -- РљРѕРґ
+	id_timer numeric NOT NULL, -- РљРѕРґ С‚Р°Р№РјРµСЂР°
+	id_operation_type numeric NOT NULL, -- РљРѕРґ С‚РёРїР° РѕРїРµСЂР°С†РёРё
+	operation_timestamp timestamp NOT NULL, -- Р’СЂРµРјРµРЅРЅР°СЏ РјРµС‚РєР° РѕРїРµСЂР°С†РёРё
 	CONSTRAINT pk_timer_operation PRIMARY KEY (id),
 	CONSTRAINT fk_timer_operation_id_operation_type FOREIGN KEY (id_operation_type) REFERENCES timer_operation_type(id),
 	CONSTRAINT fk_timer_operation_id_timer FOREIGN KEY (id_timer) REFERENCES timer(id) ON DELETE CASCADE
@@ -197,17 +200,24 @@ CREATE TABLE timer_operation (
 CREATE INDEX idx_timer_operation_id_operation_type ON timer_operation USING btree (id_operation_type);
 CREATE INDEX idx_timer_operation_id_timer ON timer_operation USING btree (id_timer);
 
-COMMENT ON TABLE timer_operation IS 'Операции над таймером';
-COMMENT ON COLUMN timer_operation.id IS 'Код';
-COMMENT ON COLUMN timer_operation.id_timer IS 'Код таймера';
-COMMENT ON COLUMN timer_operation.id_operation_type IS 'Код типа операции';
-COMMENT ON COLUMN timer_operation.operation_timestamp IS 'Временная метка операции';
+ALTER TABLE timer_operation ALTER COLUMN operation_timestamp TYPE numeric USING operation_timestamp::varchar::numeric;
+ALTER TABLE timer_operation RENAME COLUMN operation_timestamp TO operation_begin;
+ALTER TABLE timer_operation ADD operation_end numeric NULL;
+ALTER TABLE timer ADD state varchar NOT NULL DEFAULT 'stop';
+
+COMMENT ON TABLE timer_operation IS 'РћРїРµСЂР°С†РёРё РЅР°Рґ С‚Р°Р№РјРµСЂРѕРј';
+COMMENT ON COLUMN timer_operation.id IS 'РљРѕРґ';
+COMMENT ON COLUMN timer_operation.id_timer IS 'РљРѕРґ С‚Р°Р№РјРµСЂР°';
+COMMENT ON COLUMN timer_operation.id_operation_type IS 'РљРѕРґ С‚РёРїР° РѕРїРµСЂР°С†РёРё';
+COMMENT ON COLUMN timer_operation.operation_end IS 'Р’СЂРµРјРµРЅРЅР°СЏ РјРµС‚РєР° РѕРєРѕРЅС‡Р°РЅРёСЏ РѕРїРµСЂР°С†РёРё';
+COMMENT ON COLUMN timer_operation.operation_begin IS 'Р’СЂРµРјРµРЅРЅР°СЏ РјРµС‚РєР° РЅР°С‡Р°Р»Р° РѕРїРµСЂР°С†РёРё';
+COMMENT ON COLUMN timer.state IS 'РЎРѕСЃС‚РѕСЏРЅРёРµ С‚Р°Р№РјРµСЂР°';
 
 ALTER TABLE timer_operation OWNER TO "timer-user";
 GRANT ALL ON TABLE timer_operation TO "timer-user";
 
 ------------------------------------
--- Доступ пользователей к группам --
+-- Р”РѕСЃС‚СѓРї РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№ Рє РіСЂСѓРїРїР°Рј --
 ------------------------------------
 CREATE SEQUENCE seq_user_access_group
 	INCREMENT BY 1
@@ -220,12 +230,12 @@ ALTER SEQUENCE seq_user_access_group OWNER TO "timer-user";
 GRANT ALL ON SEQUENCE seq_user_access_group TO "timer-user";
 
 CREATE TABLE user_access_group (
-	id numeric NOT NULL DEFAULT nextval('seq_user_access_group'::regclass), -- Код
-	id_user numeric NOT NULL, -- Код пользователя
-	id_group numeric NOT NULL, -- Код группы
-	view_group bool NOT NULL DEFAULT false, -- Пользователь видит группу
-	view_group_timers bool NOT NULL DEFAULT false, -- Пользователь видит таймеры группы
-	edit_group_timers bool NOT NULL DEFAULT false, -- Пользователь может изменять таймеры группы
+	id numeric NOT NULL DEFAULT nextval('seq_user_access_group'::regclass), -- РљРѕРґ
+	id_user numeric NOT NULL, -- РљРѕРґ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+	id_group numeric NOT NULL, -- РљРѕРґ РіСЂСѓРїРїС‹
+	view_group bool NOT NULL DEFAULT false, -- РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РІРёРґРёС‚ РіСЂСѓРїРїСѓ
+	view_group_timers bool NOT NULL DEFAULT false, -- РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РІРёРґРёС‚ С‚Р°Р№РјРµСЂС‹ РіСЂСѓРїРїС‹
+	edit_group_timers bool NOT NULL DEFAULT false, -- РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РјРѕР¶РµС‚ РёР·РјРµРЅСЏС‚СЊ С‚Р°Р№РјРµСЂС‹ РіСЂСѓРїРїС‹
 	CONSTRAINT pk_user_access_group PRIMARY KEY (id),
 	CONSTRAINT fk_user_access_group_id_timer_group FOREIGN KEY (id_group) REFERENCES timer_group(id) ON DELETE CASCADE,
 	CONSTRAINT fk_user_access_group_id_user FOREIGN KEY (id_user) REFERENCES "user"(id) ON DELETE CASCADE
@@ -234,19 +244,19 @@ CREATE INDEX idx_user_access_group_id_group ON user_access_group USING btree (id
 CREATE INDEX idx_user_access_group_id_user ON user_access_group USING btree (id_user);
 CREATE UNIQUE INDEX udx_user_access_group_id_user_id_group ON user_access_group USING btree (id_user, id_group);
 
-COMMENT ON TABLE user_access_group IS 'Доступ пользователей к группам';
-COMMENT ON COLUMN user_access_group.id IS 'Код';
-COMMENT ON COLUMN user_access_group.id_user IS 'Код пользователя';
-COMMENT ON COLUMN user_access_group.id_group IS 'Код группы';
-COMMENT ON COLUMN user_access_group.view_group IS 'Пользователь видит группу';
-COMMENT ON COLUMN user_access_group.view_group_timers IS 'Пользователь видит таймеры группы';
-COMMENT ON COLUMN user_access_group.edit_group_timers IS 'Пользователь может изменять таймеры группы';
+COMMENT ON TABLE user_access_group IS 'Р”РѕСЃС‚СѓРї РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№ Рє РіСЂСѓРїРїР°Рј';
+COMMENT ON COLUMN user_access_group.id IS 'РљРѕРґ';
+COMMENT ON COLUMN user_access_group.id_user IS 'РљРѕРґ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ';
+COMMENT ON COLUMN user_access_group.id_group IS 'РљРѕРґ РіСЂСѓРїРїС‹';
+COMMENT ON COLUMN user_access_group.view_group IS 'РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РІРёРґРёС‚ РіСЂСѓРїРїСѓ';
+COMMENT ON COLUMN user_access_group.view_group_timers IS 'РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РІРёРґРёС‚ С‚Р°Р№РјРµСЂС‹ РіСЂСѓРїРїС‹';
+COMMENT ON COLUMN user_access_group.edit_group_timers IS 'РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РјРѕР¶РµС‚ РёР·РјРµРЅСЏС‚СЊ С‚Р°Р№РјРµСЂС‹ РіСЂСѓРїРїС‹';
 
 ALTER TABLE user_access_group OWNER TO "timer-user";
 GRANT ALL ON TABLE user_access_group TO "timer-user";
 
 --------------------------------------
--- Доступ пользователей до таймеров --
+-- Р”РѕСЃС‚СѓРї РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№ РґРѕ С‚Р°Р№РјРµСЂРѕРІ --
 --------------------------------------
 CREATE SEQUENCE seq_user_access_timer
 	INCREMENT BY 1
@@ -259,11 +269,11 @@ ALTER SEQUENCE seq_user_access_timer OWNER TO "timer-user";
 GRANT ALL ON SEQUENCE seq_user_access_timer TO "timer-user";
 
 CREATE TABLE user_access_timer (
-	id numeric NOT NULL DEFAULT nextval('seq_user_access_timer'::regclass), -- Код
-	id_user numeric NOT NULL, -- Код пользователя
-	id_timer numeric NOT NULL, -- Код таймера
-	view_timer bool NOT NULL DEFAULT false, -- Возможность видеть таймер
-	edit_timer bool NOT NULL DEFAULT false, -- Возможность выполнять операции над таймером
+	id numeric NOT NULL DEFAULT nextval('seq_user_access_timer'::regclass), -- РљРѕРґ
+	id_user numeric NOT NULL, -- РљРѕРґ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+	id_timer numeric NOT NULL, -- РљРѕРґ С‚Р°Р№РјРµСЂР°
+	view_timer bool NOT NULL DEFAULT false, -- Р’РѕР·РјРѕР¶РЅРѕСЃС‚СЊ РІРёРґРµС‚СЊ С‚Р°Р№РјРµСЂ
+	edit_timer bool NOT NULL DEFAULT false, -- Р’РѕР·РјРѕР¶РЅРѕСЃС‚СЊ РІС‹РїРѕР»РЅСЏС‚СЊ РѕРїРµСЂР°С†РёРё РЅР°Рґ С‚Р°Р№РјРµСЂРѕРј
 	CONSTRAINT pk_user_access_timer PRIMARY KEY (id),
 	CONSTRAINT fk_user_access_timer_id_timer FOREIGN KEY (id_timer) REFERENCES timer(id) ON DELETE CASCADE,
 	CONSTRAINT fk_user_access_timer_id_user FOREIGN KEY (id_user) REFERENCES "user"(id) ON DELETE CASCADE
@@ -272,12 +282,12 @@ CREATE INDEX idx_user_access_timer_id_timer ON user_access_timer USING btree (id
 CREATE INDEX idx_user_access_timer_id_user ON user_access_timer USING btree (id_user);
 CREATE UNIQUE INDEX udx_user_access_timer_id_timer_id_user ON user_access_timer USING btree (id_timer, id_user);
 
-COMMENT ON TABLE user_access_timer IS 'Доступ пользователей до таймеров';
-COMMENT ON COLUMN user_access_timer.id IS 'Код';
-COMMENT ON COLUMN user_access_timer.id_user IS 'Код пользователя';
-COMMENT ON COLUMN user_access_timer.id_timer IS 'Код таймера';
-COMMENT ON COLUMN user_access_timer.view_timer IS 'Возможность видеть таймер';
-COMMENT ON COLUMN user_access_timer.edit_timer IS 'Возможность выполнять операции над таймером';
+COMMENT ON TABLE user_access_timer IS 'Р”РѕСЃС‚СѓРї РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№ РґРѕ С‚Р°Р№РјРµСЂРѕРІ';
+COMMENT ON COLUMN user_access_timer.id IS 'РљРѕРґ';
+COMMENT ON COLUMN user_access_timer.id_user IS 'РљРѕРґ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ';
+COMMENT ON COLUMN user_access_timer.id_timer IS 'РљРѕРґ С‚Р°Р№РјРµСЂР°';
+COMMENT ON COLUMN user_access_timer.view_timer IS 'Р’РѕР·РјРѕР¶РЅРѕСЃС‚СЊ РІРёРґРµС‚СЊ С‚Р°Р№РјРµСЂ';
+COMMENT ON COLUMN user_access_timer.edit_timer IS 'Р’РѕР·РјРѕР¶РЅРѕСЃС‚СЊ РІС‹РїРѕР»РЅСЏС‚СЊ РѕРїРµСЂР°С†РёРё РЅР°Рґ С‚Р°Р№РјРµСЂРѕРј';
 
 ALTER TABLE user_access_timer OWNER TO "timer-user";
 GRANT ALL ON TABLE user_access_timer TO "timer-user";

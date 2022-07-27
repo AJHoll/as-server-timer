@@ -4,7 +4,6 @@ import {
   WebSocketGateway,
 } from '@nestjs/websockets';
 import { AuthService } from './auth.service';
-import { AuthDto } from './dto/AuthDto';
 
 @WebSocketGateway(8081, { cors: true })
 export class AuthGateway {
